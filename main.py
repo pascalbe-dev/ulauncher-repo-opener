@@ -1,3 +1,6 @@
+import os
+import subprocess
+
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.shared.action.ExtensionCustomAction import \
@@ -13,6 +16,8 @@ from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
 class RepoOpenerExtension(Extension):
 
+    root_path = "$HOME/repos"
+
     def __init__(self):
         super(RepoOpenerExtension, self).__init__()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
@@ -21,17 +26,43 @@ class RepoOpenerExtension(Extension):
                        PreferencesUpdateEventListener())
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
 
+    def find_local_git_repos(self):
+        root_path = self.root_path
+        repos = [{"path": folder_entry[0], "tool": "code-insiders"} for folder_entry in os.walk(
+            os.path.expandvars(root_path)) if ".git" in folder_entry[1]]
+
+        return repos
+
+    def open_repo(self, repo):
+        path = repo["path"]
+        tool = repo["tool"]
+
+        subprocess.Popen([tool, path])
+
 
 class KeywordQueryEventListener(EventListener):
     def on_event(self, event, extension):
-        results = []
+        repo_paths = extension.find_local_git_repos()
 
+        results = [self.gen_repo_item(path) for path in repo_paths]
         return RenderResultListAction(results)
+
+    def gen_repo_item(self, repo):
+        path = repo["path"]
+        name = os.path.basename(path)
+        description = "Open me!"
+        open_action = ExtensionCustomAction({"action": "open", "repo": repo})
+        return ExtensionResultItem(icon="images/icon.png", name=name, description=description, on_enter=open_action)
 
 
 class ItemEnterEventListener(EventListener):
     def on_event(self, event, extension):
-        pass
+        event_data = event.get_data()
+        action = event_data["action"]
+
+        if action == "open":
+            repo = event_data["repo"]
+            extension.open_repo(repo)
 
 
 class PreferencesEventListener(EventListener):
