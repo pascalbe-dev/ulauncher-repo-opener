@@ -1,0 +1,16 @@
+{
+    "required_api_version": "^2.0.0",
+    "name": "Git Repository Opener",
+    "description": "An ulauncher extension to open your local git repositories with your favorite editor.",
+    "developer_name": "Pascal Betting",
+    "icon": "images/icon.png",
+    "preferences": [
+        {
+            "id": "r",
+            "type": "keyword",
+            "name": "Open Git Repo",
+            "description": "Open any of your local git repositories",
+            "default_value": "r"
+        }
+    ]
+}
