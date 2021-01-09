@@ -11,6 +11,13 @@
             "name": "Open Git Repo",
             "description": "Open any of your local git repositories",
             "default_value": "r"
+        },
+        {
+            "id": "search_path",
+            "type": "input",
+            "name": "Search path for repositories",
+            "description": "The path under which the repositories should be searched. The use of environment variables is allowed.",
+            "default_value": "$HOME/repos"
         }
     ]
 }

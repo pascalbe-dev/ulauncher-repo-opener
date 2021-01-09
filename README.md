@@ -8,7 +8,7 @@ TODO: ADD DEMO GIF
 
 ## Features
 
-TODO: ADD FEATURES
+- search your local git repositories and open them via your default editor (vscode, intellij supported right now)
 
 ## Requirements
 
@@ -23,7 +23,7 @@ Open ulauncher preferences window -> extensions -> add extension and paste the f
 
 ## Usage
 
-TODO: EXPLAIN USAGE
+- Before usage you need to configure your base search path in the plugin preferences.
 
 ## Local development
 

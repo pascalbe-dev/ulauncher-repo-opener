@@ -21,8 +21,6 @@ class RepoOpenerExtension(Extension):
         'intellij': 'intellij-idea-ultimate'
     }
 
-    root_path = "$HOME/repos"
-
     def __init__(self):
         super(RepoOpenerExtension, self).__init__()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
@@ -32,7 +30,7 @@ class RepoOpenerExtension(Extension):
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
 
     def find_local_git_repos(self):
-        root_path = self.root_path
+        root_path = self.search_path
         repos = [{"path": folder_entry[0], "subdirs": folder_entry[1]} for folder_entry in os.walk(
             os.path.expandvars(root_path)) if ".git" in folder_entry[1]]
 
@@ -80,12 +78,13 @@ class ItemEnterEventListener(EventListener):
 
 class PreferencesEventListener(EventListener):
     def on_event(self, event, extension):
-        pass
+        extension.search_path = event.preferences["search_path"]
 
 
 class PreferencesUpdateEventListener(EventListener):
     def on_event(self, event, extension):
-        pass
+        if event.id == "search_path":
+            extension.search_path = event.new_value
 
 
 if __name__ == "__main__":
