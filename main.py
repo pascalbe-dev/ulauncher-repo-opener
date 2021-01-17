@@ -31,8 +31,10 @@ class RepoOpenerExtension(Extension):
 
     def find_local_git_repos(self):
         root_path = self.search_path
-        repos = [{"path": folder_entry[0], "subdirs": folder_entry[1]} for folder_entry in os.walk(
-            os.path.expandvars(root_path)) if ".git" in folder_entry[1]]
+        repos = [{"path": folder_entry[0],
+                  "subdirs": folder_entry[1],
+                  "name": os.path.basename(folder_entry[0])}
+                 for folder_entry in os.walk(os.path.expandvars(root_path)) if ".git" in folder_entry[1]]
 
         for repo in repos:
             tool = "code"
@@ -52,18 +54,20 @@ class RepoOpenerExtension(Extension):
 
 class KeywordQueryEventListener(EventListener):
     def on_event(self, event, extension):
-        repo_paths = extension.find_local_git_repos()
+        query = event.get_argument() or ""
 
-        results = [self.gen_repo_item(path) for path in repo_paths]
+        repos = extension.find_local_git_repos()
+        results = [self.gen_repo_item(
+            repo) for repo in repos if query.lower() in repo["name"]]
         return RenderResultListAction(results)
 
     def gen_repo_item(self, repo):
-        path = repo["path"]
-        name = os.path.basename(path)
         icon = repo["tool"]
-        description = "Open me!"
         open_action = ExtensionCustomAction({"action": "open", "repo": repo})
-        return ExtensionResultItem(icon=f"images/{icon}.png", name=name, description=description, on_enter=open_action)
+        return ExtensionResultItem(icon=f"images/{icon}.png",
+                                   name=repo["name"],
+                                   description=repo["path"],
+                                   on_enter=open_action)
 
 
 class ItemEnterEventListener(EventListener):
