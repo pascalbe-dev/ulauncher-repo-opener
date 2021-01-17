@@ -59,6 +59,9 @@ class KeywordQueryEventListener(EventListener):
     def on_event(self, event, extension):
         query = event.get_argument() or ""
 
+        if not query:
+            return RenderResultListAction([self.gen_refresh_item()])
+
         results = [self.gen_repo_item(
             repo) for repo in extension.repos if query.lower() in repo["name"]]
         return RenderResultListAction(results)
@@ -71,13 +74,24 @@ class KeywordQueryEventListener(EventListener):
                                    description=repo["path"],
                                    on_enter=open_action)
 
+    def gen_refresh_item(self):
+        name = "Renew cache"
+        description = "Otherwise type to start looking through your repos."
+        refresh_action = ExtensionCustomAction({"action": "refresh"})
+        return ExtensionResultItem(icon="images/icon.png",
+                                   name=name,
+                                   description=description,
+                                   on_enter=refresh_action)
+
 
 class ItemEnterEventListener(EventListener):
     def on_event(self, event, extension):
         event_data = event.get_data()
         action = event_data["action"]
 
-        if action == "open":
+        if action == "refresh":
+            extension.fill_cache()
+        elif action == "open":
             repo = event_data["repo"]
             extension.open_repo(repo)
 
