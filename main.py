@@ -29,6 +29,9 @@ class RepoOpenerExtension(Extension):
                        PreferencesUpdateEventListener())
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
 
+    def fill_cache(self):
+        self.repos = self.find_local_git_repos()
+
     def find_local_git_repos(self):
         root_path = self.search_path
         repos = [{"path": folder_entry[0],
@@ -56,9 +59,8 @@ class KeywordQueryEventListener(EventListener):
     def on_event(self, event, extension):
         query = event.get_argument() or ""
 
-        repos = extension.find_local_git_repos()
         results = [self.gen_repo_item(
-            repo) for repo in repos if query.lower() in repo["name"]]
+            repo) for repo in extension.repos if query.lower() in repo["name"]]
         return RenderResultListAction(results)
 
     def gen_repo_item(self, repo):
@@ -83,12 +85,14 @@ class ItemEnterEventListener(EventListener):
 class PreferencesEventListener(EventListener):
     def on_event(self, event, extension):
         extension.search_path = event.preferences["search_path"]
+        extension.fill_cache()
 
 
 class PreferencesUpdateEventListener(EventListener):
     def on_event(self, event, extension):
         if event.id == "search_path":
             extension.search_path = event.new_value
+            extension.fill_cache()
 
 
 if __name__ == "__main__":
