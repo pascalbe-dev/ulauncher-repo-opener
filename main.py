@@ -21,6 +21,11 @@ class RepoOpenerExtension(Extension):
         'intellij': 'intellij-idea-ultimate'
     }
 
+    shorthand_tool_map = {
+        'c': 'code',
+        'i': 'intellij'
+    }
+
     def __init__(self):
         super(RepoOpenerExtension, self).__init__()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
@@ -62,8 +67,33 @@ class KeywordQueryEventListener(EventListener):
         if not query:
             return RenderResultListAction([self.gen_refresh_item()])
 
-        results = [self.gen_repo_item(
-            repo) for repo in extension.repos if query.lower() in repo["name"]]
+        splitted_query = query.split(':')
+        if len(splitted_query) > 2:
+            name = "You may only have 1 x ':' in your query."
+            description = "Adjust your query."
+            return RenderResultListAction([self.gen_result_item(name, description)])
+
+        has_custom_tool = len(splitted_query) == 2
+        tool = None
+        search_term = query
+        if has_custom_tool:
+            tool_alias = splitted_query[0]
+            tool = extension.shorthand_tool_map.get(tool_alias)
+            search_term = splitted_query[1]
+            if not tool:
+                name = "The given tool shorthand does not exist."
+                description = "Use another shorthand."
+                return RenderResultListAction([self.gen_result_item(name, description)])
+
+        repos = [repo.copy() for repo in extension.repos if search_term.lower()
+                 in repo["name"]]
+
+        if has_custom_tool:
+            for repo in repos:
+                repo["tool"] = tool
+
+        results = [self.gen_repo_item(repo) for repo in repos]
+
         return RenderResultListAction(results)
 
     def gen_repo_item(self, repo):
@@ -82,6 +112,12 @@ class KeywordQueryEventListener(EventListener):
                                    name=name,
                                    description=description,
                                    on_enter=refresh_action)
+
+    def gen_result_item(self, name, description):
+        return ExtensionResultItem(icon="images/icon.png",
+                                   name=name,
+                                   description=description,
+                                   on_enter=HideWindowAction())
 
 
 class ItemEnterEventListener(EventListener):
