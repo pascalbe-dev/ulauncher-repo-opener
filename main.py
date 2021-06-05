@@ -86,7 +86,7 @@ class KeywordQueryEventListener(EventListener):
                 return RenderResultListAction([self.gen_result_item(name, description)])
 
         repos = [repo.copy() for repo in extension.repos if search_term.lower()
-                 in repo["name"]]
+                 in repo["name"].lower()]
 
         if has_custom_tool:
             for repo in repos:
