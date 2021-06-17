@@ -18,7 +18,7 @@ class RepoOpenerExtension(Extension):
 
     tool_command_map = {
         'code': 'code-insiders',
-        'intellij': 'intellij-idea-ultimate'
+        'intellij': 'idea'
     }
 
     shorthand_tool_map = {
