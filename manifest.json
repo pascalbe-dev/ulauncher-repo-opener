@@ -18,6 +18,20 @@
       "name": "Base search path for repositories",
       "description": "The path under which the repositories should be searched. The use of environment variables is allowed.",
       "default_value": "$HOME/repos"
+    },
+    {
+      "id": "intellij_command",
+      "type": "input",
+      "name": "Intellij command",
+      "description": "The command to open Intellij. You can use Intellij community or Intellij ultimate.",
+      "default_value": "intellij-idea-community"
+    },
+    {
+      "id": "vscode_command",
+      "type": "input",
+      "name": "Visual Studio Code command",
+      "description": "The command to open Visual Studio Code. You can use the normal or the insiders version.",
+      "default_value": "code-insiders"
     }
   ]
 }

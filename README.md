@@ -8,7 +8,9 @@ TODO: ADD DEMO GIF
 
 ## Features
 
-- search your local git repositories and open them via your default editor (vscode, intellij supported right now)
+- supported editors: intellij, vscode
+- open your local git repositories quickly with your recently used editor
+- open your local git repositories quickly with a shorthand for your preferred editor
 
 ## Requirements
 

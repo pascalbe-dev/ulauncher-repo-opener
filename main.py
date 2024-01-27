@@ -16,14 +16,16 @@ from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
 class RepoOpenerExtension(Extension):
     tool_command_map = {
-        'code': 'code-insiders',
-        'intellij': 'intellij-idea-community'
+        'code': None,
+        'intellij': None
     }
 
     shorthand_tool_map = {
         'c': 'code',
         'i': 'intellij'
     }
+
+    search_path = None
 
     repos = []
 
@@ -128,6 +130,8 @@ class ItemEnterEventListener(EventListener):
 class PreferencesEventListener(EventListener):
     def on_event(self, event, extension: RepoOpenerExtension):
         extension.search_path = event.preferences["search_path"]
+        extension.tool_command_map["code"] = event.preferences["vscode_command"]
+        extension.tool_command_map["intellij"] = event.preferences["intellij_command"]
         extension.find_and_store_local_git_repos()
 
 
@@ -136,6 +140,12 @@ class PreferencesUpdateEventListener(EventListener):
         if event.id == "search_path":
             extension.search_path = event.new_value
             extension.find_and_store_local_git_repos()
+        elif event.id == "vscode_command":
+            extension.tool_command_map["code"] = event.new_value
+        elif event.id == "intellij_command":
+            extension.tool_command_map["intellij"] = event.new_value
+        else:
+            pass
 
 
 if __name__ == "__main__":
