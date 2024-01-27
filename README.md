@@ -2,7 +2,7 @@
 
 > [ulauncher](https://ulauncher.io/) An ulauncher extension to open your local git repositories with your favorite editor.
 
-## Usage
+## Demo
 
 TODO: ADD DEMO GIF
 
@@ -23,7 +23,7 @@ Open ulauncher preferences window -> extensions -> add extension and paste the f
 
 ## Usage
 
-- Before usage you need to configure your base search path in the plugin preferences.
+- Before usage you might want to change your base search path in the plugin preferences.
 
 ## Local development
 
@@ -32,7 +32,7 @@ Open ulauncher preferences window -> extensions -> add extension and paste the f
 - `less` package installed
 - `inotify-tools` package installed
 
-### Steps 
+### Steps
 
 1. Clone the repo `git clone https://github.com/pascalbe-dev/ulauncher-repo-opener.git`
 2. Cd into the folder `cd ulauncher-repo-opener`
