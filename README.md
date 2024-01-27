@@ -8,7 +8,7 @@ TODO: ADD DEMO GIF
 
 ## Features
 
-- supported editors: intellij, vscode
+- supported editors: intellij (community and ultimate), vscode (normal and insiders)
 - open your local git repositories quickly with your recently used editor
 - open your local git repositories quickly with a shorthand for your preferred editor
 
