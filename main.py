@@ -17,7 +17,7 @@ from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 class RepoOpenerExtension(Extension):
     tool_command_map = {
         'code': 'code-insiders',
-        'intellij': 'idea'
+        'intellij': 'intellij-idea-community'
     }
 
     shorthand_tool_map = {
@@ -40,7 +40,7 @@ class RepoOpenerExtension(Extension):
         repos = [{"path": folder_entry[0],
                   "subdirs": folder_entry[1],
                   "name": os.path.basename(folder_entry[0]),
-                  "tool": ".idea" if ".idea" in folder_entry[1] else "code"
+                  "tool": "intellij" if ".idea" in folder_entry[1] else "code"
                   }
                  for folder_entry in os.walk(os.path.expandvars(root_path)) if ".git" in folder_entry[1]]
 
