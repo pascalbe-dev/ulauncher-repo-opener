@@ -15,7 +15,6 @@ from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
 
 class RepoOpenerExtension(Extension):
-
     tool_command_map = {
         'code': 'code-insiders',
         'intellij': 'idea'
@@ -25,6 +24,8 @@ class RepoOpenerExtension(Extension):
         'c': 'code',
         'i': 'intellij'
     }
+
+    repos = []
 
     def __init__(self):
         super(RepoOpenerExtension, self).__init__()
@@ -38,17 +39,12 @@ class RepoOpenerExtension(Extension):
         root_path = self.search_path
         repos = [{"path": folder_entry[0],
                   "subdirs": folder_entry[1],
-                  "name": os.path.basename(folder_entry[0])}
+                  "name": os.path.basename(folder_entry[0]),
+                  "tool": ".idea" if ".idea" in folder_entry[1] else "code"
+                  }
                  for folder_entry in os.walk(os.path.expandvars(root_path)) if ".git" in folder_entry[1]]
 
-        for repo in repos:
-            tool = "code"
-            if ".idea" in repo["subdirs"]:
-                tool = "intellij"
-
-            repo["tool"] = tool
-
-        return repos
+        self.repos = repos
 
     def open_repo(self, repo):
         path = repo["path"]
@@ -58,7 +54,7 @@ class RepoOpenerExtension(Extension):
 
 
 class KeywordQueryEventListener(EventListener):
-    def on_event(self, event, extension):
+    def on_event(self, event, extension: RepoOpenerExtension):
         query = event.get_argument() or ""
 
         if not query:
