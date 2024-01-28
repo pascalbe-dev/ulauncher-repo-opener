@@ -4,7 +4,7 @@
 
 ## Demo
 
-TODO: ADD DEMO GIF
+https://github.com/pascalbe-dev/ulauncher-repo-opener/assets/26909176/ee0686ba-d299-4bb2-98e0-b62a0e0c844e
 
 ## Features
 
