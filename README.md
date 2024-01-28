@@ -17,15 +17,19 @@ TODO: ADD DEMO GIF
 - [ulauncher 5](https://ulauncher.io/)
 - Python > 3
 
-## Install
+## Installation
 
 Open ulauncher preferences window -> extensions -> add extension and paste the following url:
 
 `https://github.com/pascalbe-dev/ulauncher-repo-opener.git`
 
-## Usage
+## Configuration
 
 - Before usage you might want to change your base search path in the plugin preferences.
+
+## Contribution
+
+Please refer to [the contribution guidelines](./CONTRIBUTING.md)
 
 ## Local development
 
