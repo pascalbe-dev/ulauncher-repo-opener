@@ -8,7 +8,7 @@
     {
       "id": "keyword",
       "type": "keyword",
-      "name": "Git Repository Opener keyword",
+      "name": "Git Repository Opener",
       "description": "The keyword to start the Git Repository Opener extension.",
       "default_value": "r"
     },
