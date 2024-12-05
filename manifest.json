@@ -20,6 +20,13 @@
       "default_value": "$HOME/repos"
     },
     {
+      "id": "mono_repositories",
+      "type": "input",
+      "name": "Repositories with multiple codebases.",
+      "description": "List to multiply repostories into specific paths. Example: \"code1:frontend,backend\" will split the repository \"code1\" into 3 items (code1, code1-fronted, code1-backend). Multiple Items will be seperated by \";\"",
+      "default_value": ""
+    },
+    {
       "id": "intellij_command",
       "type": "input",
       "name": "Intellij command",
@@ -32,6 +39,41 @@
       "name": "Visual Studio Code command",
       "description": "The command to open Visual Studio Code. You can use the normal or the insiders version.",
       "default_value": "code-insiders"
+    },
+    {
+      "id": "rider_command",
+      "type": "input",
+      "name": "Rider command",
+      "description": "The command to open Rider.",
+      "default_value": "rider"
+    },
+    {
+      "id": "webstrom_command",
+      "type": "input",
+      "name": "WebStorm command",
+      "description": "The command to open WebStorm.",
+      "default_value": "webstorm"
+    },
+    {
+      "id": "pycharm_command",
+      "type": "input",
+      "name": "PyCharm command",
+      "description": "The command to open PyCharm. You can use the community or professional version.",
+      "default_value": "pycharm"
+    },
+    {
+      "id": "goland_command",
+      "type": "input",
+      "name": "GoLand command",
+      "description": "The command to open GoLand.",
+      "default_value": "goland"
+    },
+    {
+      "id": "rustrover_command",
+      "type": "input",
+      "name": "RustRover command",
+      "description": "The command to open GoLand.",
+      "default_value": "rustrover"
     }
   ]
 }
