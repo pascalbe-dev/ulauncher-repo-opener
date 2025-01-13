@@ -239,8 +239,11 @@ class PreferencesEventListener(EventListener):
         editor_map = event.preferences["language_editor_map"]
         for line in editor_map.split(':'):
             if line.strip():
-                lang, editor = line.split(',')
-                extension.language_editor_map[lang.strip().lower()] = editor.strip().lower()
+                parts = line.split(',')
+                if len(parts) == 2:
+                    lang = parts[0].strip().lower()
+                    editor = parts[1].strip().lower()
+                    extension.language_editor_map[lang] = editor
         extension.resolve_installed_tools()
         extension.find_and_store_local_git_repos()
 
@@ -269,8 +272,11 @@ class PreferencesUpdateEventListener(EventListener):
             editor_map = event.preferences["language_editor_map"]
             for line in editor_map.split(':'):
                 if line.strip():
-                    lang, editor = line.split(',')
-                    extension.language_editor_map[lang.strip().lower()] = editor.strip().lower()
+                    parts = line.split(',')
+                    if len(parts) == 2:
+                        lang = parts[0].strip().lower()
+                        editor = parts[1].strip().lower()
+                        extension.language_editor_map[lang] = editor
         
         extension.resolve_installed_tools()
 
