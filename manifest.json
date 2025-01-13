@@ -27,6 +27,13 @@
       "default_value": ""
     },
     {
+      "id": "language_editor_map",
+      "type": "input",
+      "name": "Language to Editor mapping",
+      "description": "A mapping between the programming language and the default ide to open. Each line defines one mapping. The mapping is seperated by semicolon ';' with language and editor. Example: csharp;rider",
+      "default_value": "python;pycharm\njavascript;webstorm\njava;intellij\ngo;goland\nrust;rustrover\ncsharp;rider"
+    },
+    {
       "id": "intellij_command",
       "type": "input",
       "name": "Intellij command",

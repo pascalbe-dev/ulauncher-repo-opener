@@ -26,15 +26,6 @@ class CodeEditor(str):
 class CodeEditorResolver:
     DEFAULT_EDITOR = CodeEditor.CODE
 
-    LANGUAGE_EDITOR_MAP = {
-        'python': CodeEditor.PYCHARM,
-        'javascript': CodeEditor.WEBSTORM,
-        'java': CodeEditor.INTELLIJ,
-        'go': CodeEditor.GOLAND,
-        'rust': CodeEditor.RUSTROVER,
-        'csharp': CodeEditor.RIDER,
-    }
-
     LANGUAGE_FILE_EXTENSIONS = {
         'python': ['.py'],
         'javascript': ['.js', '.jsx', '.ts', '.tsx'],
@@ -44,7 +35,6 @@ class CodeEditorResolver:
         'rust': ['.rs'],
     }
 
-    @staticmethod
     def detect_language(folder_path: str) -> set:
         language_counts = {language: 0 for language in CodeEditorResolver.LANGUAGE_FILE_EXTENSIONS}
 
@@ -64,13 +54,23 @@ class CodeEditorResolver:
 
         return most_common_language if language_counts[most_common_language] > 0 else "unknown"
 
-    @staticmethod
-    def get_editor(folder_path: str) -> str:
-        language = CodeEditorResolver.detect_language(folder_path)
-        editor = CodeEditorResolver.LANGUAGE_EDITOR_MAP[language] if language in CodeEditorResolver.LANGUAGE_EDITOR_MAP else CodeEditorResolver.DEFAULT_EDITOR
+    def get_editor(self, folder_path: str, lang_editor_map: dict[str,str]) -> str:
+        language = self.detect_language(folder_path)
+        editor = lang_editor_map[language] if language in lang_editor_map else self.DEFAULT_EDITOR
         return editor
 
 class RepoOpenerExtension(Extension):
+    editor_resolver: CodeEditorResolver = None
+
+    language_editor_map = {
+        'python': CodeEditor.PYCHARM,
+        'javascript': CodeEditor.WEBSTORM,
+        'java': CodeEditor.INTELLIJ,
+        'go': CodeEditor.GOLAND,
+        'rust': CodeEditor.RUSTROVER,
+        'csharp': CodeEditor.RIDER,
+    }
+
     tool_command_map = {
         'code': None,
         'intellij': None,
@@ -98,6 +98,7 @@ class RepoOpenerExtension(Extension):
 
     def __init__(self):
         super(RepoOpenerExtension, self).__init__()
+        self.editor_resolver = CodeEditorResolver()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
         self.subscribe(PreferencesEvent, PreferencesEventListener())
         self.subscribe(PreferencesUpdateEvent,
@@ -137,10 +138,10 @@ class RepoOpenerExtension(Extension):
         self.repos = repos
 
     def get_editor(self, folder_path: str) -> str:
-        editor = CodeEditorResolver.get_editor(folder_path)
+        editor = self.editor_resolver.get_editor(folder_path, self.language_editor_map)
         if self.tool_command_map[editor] is not None:
             return editor
-        return CodeEditorResolver.DEFAULT_EDITOR
+        return self.editor_resolver.DEFAULT_EDITOR
 
 
     def open_repo(self, repo):
@@ -170,7 +171,7 @@ class KeywordQueryEventListener(EventListener):
             tool_alias = splitted_query[0]
             tool = extension.shorthand_tool_map.get(tool_alias)
             search_term = splitted_query[1]
-            if not tool:
+            if tool is None or extension.tool_command_map[tool] is None:
                 name = "The given tool shorthand does not exist."
                 description = "Use another shorthand."
                 return RenderResultListAction([self.gen_result_item(name, description)])
@@ -235,6 +236,11 @@ class PreferencesEventListener(EventListener):
         extension.tool_command_map["goland"] = event.preferences["goland_command"]
         extension.tool_command_map["rustrover"] = event.preferences["rustrover_command"]
         extension.mono_repositories = event.preferences["mono_repositories"]
+        editor_map = event.preferences["language_editor_map"]
+        for line in editor_map.split('\n'):
+            if line.strip():
+                lang, editor = line.split(';')
+                extension.language_editor_map[lang.strip().lower()] = editor.strip().lower()
         extension.resolve_installed_tools()
         extension.find_and_store_local_git_repos()
 
@@ -259,6 +265,12 @@ class PreferencesUpdateEventListener(EventListener):
             extension.tool_command_map["goland"] = event.new_value
         elif event.id == "rustrover_command":
             extension.tool_command_map["rustrover"] = event.new_value
+        elif event.id == "language_editor_map":
+            editor_map = event.preferences["language_editor_map"]
+            for line in editor_map.split('\n'):
+                if line.strip():
+                    lang, editor = line.split(';')
+                    extension.language_editor_map[lang.strip().lower()] = editor.strip().lower()
         
         extension.resolve_installed_tools()
 
