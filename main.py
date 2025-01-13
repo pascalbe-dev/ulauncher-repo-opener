@@ -237,9 +237,9 @@ class PreferencesEventListener(EventListener):
         extension.tool_command_map["rustrover"] = event.preferences["rustrover_command"]
         extension.mono_repositories = event.preferences["mono_repositories"]
         editor_map = event.preferences["language_editor_map"]
-        for line in editor_map.split('\n'):
+        for line in editor_map.split(':'):
             if line.strip():
-                lang, editor = line.split(';')
+                lang, editor = line.split(',')
                 extension.language_editor_map[lang.strip().lower()] = editor.strip().lower()
         extension.resolve_installed_tools()
         extension.find_and_store_local_git_repos()
@@ -267,9 +267,9 @@ class PreferencesUpdateEventListener(EventListener):
             extension.tool_command_map["rustrover"] = event.new_value
         elif event.id == "language_editor_map":
             editor_map = event.preferences["language_editor_map"]
-            for line in editor_map.split('\n'):
+            for line in editor_map.split(':'):
                 if line.strip():
-                    lang, editor = line.split(';')
+                    lang, editor = line.split(',')
                     extension.language_editor_map[lang.strip().lower()] = editor.strip().lower()
         
         extension.resolve_installed_tools()
