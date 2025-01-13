@@ -13,6 +13,7 @@ from ulauncher.api.shared.event import (ItemEnterEvent, KeywordQueryEvent,
                                         PreferencesEvent,
                                         PreferencesUpdateEvent)
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
+import json
 
 class CodeEditor(str):
     CODE = "code"
@@ -116,7 +117,6 @@ class RepoOpenerExtension(Extension):
                   "tool": self.get_editor(folder_entry[0])
                   }
                  for folder_entry in os.walk(os.path.expandvars(root_path)) if ".git" in folder_entry[1]]
-        
         if self.mono_repositories:
             for m in [x for x in self.mono_repositories.split(';') if x]:
                 parts = m.split(':')
@@ -237,24 +237,33 @@ class PreferencesEventListener(EventListener):
         extension.tool_command_map["rustrover"] = event.preferences["rustrover_command"]
         extension.mono_repositories = event.preferences["mono_repositories"]
         editor_map = event.preferences["language_editor_map"]
-        for line in editor_map.split(':'):
+        for line in editor_map.split(','):
             if line.strip():
-                parts = line.split(',')
+                parts = line.split(':')
                 if len(parts) == 2:
                     lang = parts[0].strip().lower()
                     editor = parts[1].strip().lower()
-                    extension.language_editor_map[lang] = editor
+                    extension.language_editor_map[lang] = CodeEditor(editor)
         extension.resolve_installed_tools()
         extension.find_and_store_local_git_repos()
 
 
 class PreferencesUpdateEventListener(EventListener):
     def on_event(self, event, extension: RepoOpenerExtension):
-        if event.id == "search_path" or "mono_repositories":
+        if event.id == "search_path":
             extension.search_path = event.new_value
-            extension.find_and_store_local_git_repos()
-            return
-        if event.id == "vscode_command":
+        elif event.id == "mono_repositories":
+            extension.mono_repositories = event.new_value
+        elif event.id == "language_editor_map":
+            editor_map = event.new_value
+            for line in editor_map.split(','):
+                if line.strip():
+                    parts = line.split(':')
+                    if len(parts) == 2:
+                        lang = parts[0].strip().lower()
+                        editor = parts[1].strip().lower()
+                        extension.language_editor_map[lang] = CodeEditor(editor)
+        elif event.id == "vscode_command":
             extension.tool_command_map["code"] = event.new_value
         elif event.id == "intellij_command":
             extension.tool_command_map["intellij"] = event.new_value
@@ -268,17 +277,8 @@ class PreferencesUpdateEventListener(EventListener):
             extension.tool_command_map["goland"] = event.new_value
         elif event.id == "rustrover_command":
             extension.tool_command_map["rustrover"] = event.new_value
-        elif event.id == "language_editor_map":
-            editor_map = event.preferences["language_editor_map"]
-            for line in editor_map.split(':'):
-                if line.strip():
-                    parts = line.split(',')
-                    if len(parts) == 2:
-                        lang = parts[0].strip().lower()
-                        editor = parts[1].strip().lower()
-                        extension.language_editor_map[lang] = editor
-        
         extension.resolve_installed_tools()
+        extension.find_and_store_local_git_repos()
 
 
 if __name__ == "__main__":
