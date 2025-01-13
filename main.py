@@ -35,7 +35,7 @@ class CodeEditorResolver:
         'rust': ['.rs'],
     }
 
-    def detect_language(folder_path: str) -> set:
+    def detect_language(self, folder_path: str) -> set:
         language_counts = {language: 0 for language in CodeEditorResolver.LANGUAGE_FILE_EXTENSIONS}
 
         for _, _, files in os.walk(folder_path):
