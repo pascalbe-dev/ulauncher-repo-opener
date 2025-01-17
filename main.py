@@ -17,6 +17,7 @@ from ulauncher.api.shared.event import (ItemEnterEvent, KeywordQueryEvent,
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 import json
 
+
 class CodeEditor(str):
     CODE = "code"
     WEBSTORM = "webstorm"
@@ -25,6 +26,7 @@ class CodeEditor(str):
     GOLAND = "goland"
     RUSTROVER = "rustrover"
     RIDER = "rider"
+
 
 class CodeEditorResolver:
     DEFAULT_EDITOR = CodeEditor.CODE
@@ -58,19 +60,21 @@ class CodeEditorResolver:
         languages_with_more_than_10_files = [lang for lang, count in language_counts.items() if count > 10]
 
         if len(languages_with_more_than_10_files) > 1:
-            logging.warning(f"Detected multiple languages '{languages_with_more_than_10_files}' for repo '{folder_path}'.")
+            logging.warning(
+                f"Detected multiple languages '{languages_with_more_than_10_files}' for repo '{folder_path}'.")
             return "unknown"
-        
+
         most_common_language = max(language_counts, key=language_counts.get, default=None)
 
         result = most_common_language if language_counts[most_common_language] > 0 else "unknown"
         logging.info(f"Detected language '{result}' for repo '{folder_path}'.")
         return result
 
-    def get_editor(self, folder_path: str, lang_editor_map: dict[str,str]) -> str:
+    def get_editor(self, folder_path: str, lang_editor_map: dict[str, str]) -> str:
         language = self.detect_language(folder_path)
         editor = lang_editor_map[language] if language in lang_editor_map else self.DEFAULT_EDITOR
         return editor
+
 
 class RepoOpenerExtension(Extension):
     editor_resolver: CodeEditorResolver = None
@@ -155,7 +159,6 @@ class RepoOpenerExtension(Extension):
             return editor
         return self.editor_resolver.DEFAULT_EDITOR
 
-
     def open_repo(self, repo):
         path = repo["path"]
         tool = self.tool_command_map[repo["tool"]]
@@ -190,7 +193,6 @@ class KeywordQueryEventListener(EventListener):
 
         repos = [repo.copy() for repo in extension.repos if search_term.lower()
                  in repo["name"].lower()]
-
 
         if has_custom_tool:
             for repo in repos:
