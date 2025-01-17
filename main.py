@@ -1,3 +1,4 @@
+import logging
 import os
 import subprocess
 import shutil
@@ -49,11 +50,14 @@ class CodeEditorResolver:
         languages_with_more_than_10_files = [lang for lang, count in language_counts.items() if count > 10]
 
         if len(languages_with_more_than_10_files) > 1:
+            logging.warning(f"Detected multiple languages '{languages_with_more_than_10_files}' for repo '{folder_path}'.")
             return "unknown"
         
         most_common_language = max(language_counts, key=language_counts.get, default=None)
 
-        return most_common_language if language_counts[most_common_language] > 0 else "unknown"
+        result = most_common_language if language_counts[most_common_language] > 0 else "unknown"
+        logging.info(f"Detected language '{result}' for repo '{folder_path}'.")
+        return result
 
     def get_editor(self, folder_path: str, lang_editor_map: dict[str,str]) -> str:
         language = self.detect_language(folder_path)
