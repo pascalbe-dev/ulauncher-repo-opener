@@ -8,9 +8,19 @@ https://github.com/pascalbe-dev/ulauncher-repo-opener/assets/26909176/ee0686ba-d
 
 ## Features
 
-- supported editors: intellij (community and ultimate), vscode (normal and insiders)
-- open your local git repositories quickly with your recently used editor
+- supported editors: 
+  - intellij (community and ultimate)
+  - vscode (normal and insiders)
+  - goland
+  - rustrover
+  - pycharm
+  - webstorm
+  - rider
+- open your local git repositories quickly with the editor fitting to the repos mainly used programming language (e.g. intellij for java, goland for go, ...)
+  - the language <-> editor mapping can be configured in the plugin preferences
 - open your local git repositories quickly with a shorthand for your preferred editor
+- open subdirectories or the main directory of your mono-repository easily
+  - the mono-repositories need to be configured in the plugin preferences
 
 ## Requirements
 
