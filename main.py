@@ -2,6 +2,7 @@ import logging
 import os
 import subprocess
 import shutil
+from os.path import join
 
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
@@ -37,11 +38,18 @@ class CodeEditorResolver:
         'rust': ['.rs'],
     }
 
+    TO_IGNORE_DIRS = ['.git', '.idea', '__pycache__', 'node_modules', '.angular', 'target', 'build', 'dist', 'venv',
+                      'env']
+
     def detect_language(self, folder_path: str) -> set:
         language_counts = {language: 0 for language in CodeEditorResolver.LANGUAGE_FILE_EXTENSIONS}
 
-        for _, _, files in os.walk(folder_path):
+        for root, dirs, files in os.walk(folder_path):
             for file in files:
+                file_path = join(root, file)
+                if any([ignore_dir in file_path for ignore_dir in CodeEditorResolver.TO_IGNORE_DIRS]):
+                    continue
+
                 _, ext = os.path.splitext(file)
                 for language, extensions in CodeEditorResolver.LANGUAGE_FILE_EXTENSIONS.items():
                     if ext in extensions:
